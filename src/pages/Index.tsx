@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -81,69 +82,70 @@ const Index = () => {
             </p>
           </div>
 
-          <PatientProfile profile={patientProfile} />
-          
-          <AppointmentsList appointments={appointments} />
-
-          {!file && !analysis && (
-            <div className="max-w-2xl mx-auto">
-              <FileUpload onFileUpload={handleFileUpload} />
-              
-              <div className="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                <h3 className="text-sm font-medium text-blue-800 mb-2">Sample Report Format</h3>
-                <p className="text-xs text-blue-700 mb-3">
-                  For best results, ensure your blood test report includes the following common markers:
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {["Glucose", "HbA1c", "Cholesterol", "HDL", "LDL", "Triglycerides", 
-                    "Hemoglobin", "White Blood Cells", "Platelets", "Creatinine", "GFR", "TSH"].map((marker) => (
-                    <div key={marker} className="text-xs bg-white py-1 px-2 rounded border border-blue-100">
-                      {marker}
+          {/* Three-section layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            {/* Left column - Contains upload section and appointments */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              {/* Upload Blood Test Section */}
+              <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <h2 className="text-xl font-semibold mb-4">Upload Blood Test Report</h2>
+                {!file && !analysis && !isAnalyzing && (
+                  <FileUpload onFileUpload={handleFileUpload} />
+                )}
+                
+                {isAnalyzing && (
+                  <LoadingAnalysis />
+                )}
+                
+                {analysis && !isAnalyzing && (
+                  <>
+                    <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <FileSpreadsheet className="h-5 w-5 text-medical-500" />
+                          <h2 className="font-medium">{file?.name}</h2>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Uploaded on {new Date().toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" onClick={handleReset} size="sm">
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          New Analysis
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={handleDownloadReport}
+                          size="sm"
+                          className="border-medical-500 text-medical-700 hover:bg-medical-50"
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          Download PDF
+                        </Button>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    
+                    <Button onClick={handleBookConsultation} className="w-full">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Book Doctor Consultation
+                    </Button>
+                  </>
+                )}
               </div>
+              
+              {/* Appointments Section */}
+              <AppointmentsList appointments={appointments} />
             </div>
-          )}
-
-          {isAnalyzing && (
-            <LoadingAnalysis />
-          )}
-
-          {analysis && !isAnalyzing && (
-            <>
-              <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <FileSpreadsheet className="h-5 w-5 text-medical-500" />
-                    <h2 className="font-medium">{file?.name}</h2>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Uploaded on {new Date().toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Button variant="outline" onClick={handleReset}>
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    New Analysis
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleDownloadReport}
-                    className="border-medical-500 text-medical-700 hover:bg-medical-50"
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    Download PDF Report
-                  </Button>
-                  <Button onClick={handleBookConsultation}>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Book Doctor Consultation
-                  </Button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-1">
+            
+            {/* Right column - Patient Profile */}
+            <div className="lg:col-span-5">
+              <PatientProfile profile={patientProfile} />
+              
+              {/* Display Analysis Summary if available */}
+              {analysis && !isAnalyzing && (
+                <div className="mt-6">
+                  <h2 className="text-xl font-semibold mb-4">Health Analysis</h2>
                   <AnalysisSummary 
                     healthScore={analysis.healthScore}
                     abnormalMarkers={analysis.abnormalMarkers}
@@ -152,7 +154,15 @@ const Index = () => {
                     recommendations={analysis.recommendations}
                   />
                 </div>
-                <div className="lg:col-span-2">
+              )}
+            </div>
+          </div>
+
+          {/* Analysis Results - Show only when there's an analysis */}
+          {analysis && !isAnalyzing && (
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div className="lg:col-span-3">
                   <PredictionCharts 
                     diseaseRisks={analysis.chartDiseaseRisks}
                     markerDistribution={analysis.markerDistribution}
@@ -175,17 +185,6 @@ const Index = () => {
 
               <h2 className="text-xl font-semibold mb-4">Blood Test Markers</h2>
               <HealthMetricsTable metrics={analysis.metrics} />
-
-              <div className="flex justify-center mt-8">
-                <Button 
-                  onClick={handleBookConsultation}
-                  className="bg-medical-600 hover:bg-medical-700"
-                  size="lg"
-                >
-                  <UserPlus className="h-5 w-5 mr-2" />
-                  Book Doctor Consultation to Discuss Results
-                </Button>
-              </div>
 
               <div className="mt-8 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
                 <h3 className="text-sm font-medium text-yellow-800 mb-1">Disclaimer</h3>

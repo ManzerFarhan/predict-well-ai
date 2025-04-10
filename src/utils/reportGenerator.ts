@@ -34,7 +34,7 @@ export const generatePDF = (analysis: HealthAnalysis) => {
   
   let yPosition = 110;
   analysis.diseaseRisks.forEach(risk => {
-    const riskColors = {
+    const riskColors: Record<string, [number, number, number]> = {
       low: [0, 128, 0],      // Green
       medium: [255, 140, 0],  // Orange
       high: [220, 53, 69],    // Red
@@ -42,7 +42,7 @@ export const generatePDF = (analysis: HealthAnalysis) => {
     };
     
     doc.setFontSize(12);
-    doc.setTextColor(...riskColors[risk.riskLevel]);
+    doc.setTextColor(riskColors[risk.riskLevel][0], riskColors[risk.riskLevel][1], riskColors[risk.riskLevel][2]);
     doc.text(`${risk.name}: ${(risk.probability * 100).toFixed(1)}% - ${risk.riskLevel.toUpperCase()} RISK`, 20, yPosition);
     
     doc.setFontSize(10);
