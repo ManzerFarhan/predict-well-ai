@@ -1,23 +1,82 @@
 
 import { HealthAnalysis } from "@/types/health";
+import jsPDF from "jspdf";
 
 export const generatePDF = (analysis: HealthAnalysis) => {
-  // In a real implementation, this would use a library like jsPDF or pdfmake
-  // to generate a proper PDF file with the analysis data
+  const doc = new jsPDF();
   
-  // For this mockup, we'll create and download a JSON file with the analysis data
-  const jsonData = JSON.stringify(analysis, null, 2);
-  const blob = new Blob([jsonData], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
+  // Add title
+  doc.setFontSize(20);
+  doc.setTextColor(0, 91, 140); // Medical blue
+  doc.text("Health Analysis Report", 105, 20, { align: "center" });
   
-  // Create a download link and trigger it
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `health_report_${new Date().toISOString().split("T")[0]}.json`;
-  document.body.appendChild(link);
-  link.click();
+  // Add date
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 30, { align: "center" });
   
-  // Clean up
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  // Add health score section
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Health Score Assessment", 20, 45);
+  
+  doc.setFontSize(12);
+  doc.setTextColor(50, 50, 50);
+  doc.text(`Overall Health Score: ${analysis.healthScore}/100`, 20, 55);
+  doc.text(`Normal Markers: ${analysis.normalMarkers}`, 20, 65);
+  doc.text(`Abnormal Markers: ${analysis.abnormalMarkers}`, 20, 75);
+  doc.text(`Critical Markers: ${analysis.criticalMarkers}`, 20, 85);
+  
+  // Add disease risks section
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Disease Risk Assessment", 20, 100);
+  
+  let yPosition = 110;
+  analysis.diseaseRisks.forEach(risk => {
+    const riskColors = {
+      low: [0, 128, 0],      // Green
+      medium: [255, 140, 0],  // Orange
+      high: [220, 53, 69],    // Red
+      critical: [136, 8, 8]   // Dark red
+    };
+    
+    doc.setFontSize(12);
+    doc.setTextColor(...riskColors[risk.riskLevel]);
+    doc.text(`${risk.name}: ${(risk.probability * 100).toFixed(1)}% - ${risk.riskLevel.toUpperCase()} RISK`, 20, yPosition);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(80, 80, 80);
+    
+    // Handle text wrapping for description
+    const splitDescription = doc.splitTextToSize(risk.description, 170);
+    doc.text(splitDescription, 20, yPosition + 5);
+    
+    yPosition += 10 + (splitDescription.length * 5);
+  });
+  
+  // Add recommendations
+  yPosition += 10;
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Recommendations", 20, yPosition);
+  
+  yPosition += 10;
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
+  
+  analysis.recommendations.forEach(recommendation => {
+    doc.text(`• ${recommendation}`, 20, yPosition);
+    yPosition += 7;
+  });
+  
+  // Add disclaimer
+  yPosition = Math.max(yPosition, 250);
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text("DISCLAIMER: This health prediction is for informational purposes only and does not constitute medical advice.", 105, yPosition, { align: "center" });
+  doc.text("Always consult with a healthcare professional for proper diagnosis and treatment.", 105, yPosition + 4, { align: "center" });
+  
+  // Save the PDF
+  doc.save(`health_report_${new Date().toISOString().split("T")[0]}.pdf`);
 };

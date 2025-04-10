@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -9,7 +8,10 @@ import AnalysisSummary from "@/components/AnalysisSummary";
 import PredictionCharts from "@/components/PredictionCharts";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
 import HealthChatbot from "@/components/HealthChatbot";
+import PatientProfile from "@/components/PatientProfile";
+import AppointmentsList from "@/components/AppointmentsList";
 import { analyzeBloodTest } from "@/services/mockHealthService";
+import { getMockPatientProfile, getMockAppointments } from "@/services/mockPatientService";
 import { HealthAnalysis } from "@/types/health";
 import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, RefreshCw, UserPlus, FileText } from "lucide-react";
@@ -21,6 +23,9 @@ const Index = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<HealthAnalysis | null>(null);
+  
+  const patientProfile = getMockPatientProfile();
+  const appointments = getMockAppointments();
 
   const handleFileUpload = async (uploadedFile: File) => {
     setFile(uploadedFile);
@@ -49,10 +54,8 @@ const Index = () => {
   const handleDownloadReport = () => {
     if (!analysis) return;
     
-    // Show toast to indicate download started
     toast.success("Preparing your health report...");
     
-    // In a real implementation, this would generate a PDF report
     setTimeout(() => {
       generatePDF(analysis);
       toast.success("Report downloaded successfully!");
@@ -77,6 +80,10 @@ const Index = () => {
               Upload your blood test report to get AI-powered health insights and disease risk assessment
             </p>
           </div>
+
+          <PatientProfile profile={patientProfile} />
+          
+          <AppointmentsList appointments={appointments} />
 
           {!file && !analysis && (
             <div className="max-w-2xl mx-auto">
@@ -126,7 +133,7 @@ const Index = () => {
                     className="border-medical-500 text-medical-700 hover:bg-medical-50"
                   >
                     <FileText className="h-4 w-4 mr-2" />
-                    Download Report
+                    Download PDF Report
                   </Button>
                   <Button onClick={handleBookConsultation}>
                     <UserPlus className="h-4 w-4 mr-2" />

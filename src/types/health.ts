@@ -59,6 +59,29 @@ export interface Exercise {
   cautions: string[];
 }
 
+export interface Appointment {
+  id: string;
+  doctorName: string;
+  doctorSpecialty: string;
+  date: string;
+  time: string;
+  status: "scheduled" | "completed" | "cancelled";
+  notes?: string;
+}
+
+export interface PatientProfile {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  bloodType: string;
+  height: string;
+  weight: string;
+  allergies: string[];
+  conditions: string[];
+  medications: string[];
+}
+
 export interface HealthAnalysis {
   healthScore: number;
   abnormalMarkers: number;
