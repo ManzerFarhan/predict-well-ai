@@ -28,6 +28,21 @@ export interface ChartDiseaseRisk {
   color: string;
 }
 
+export interface HealthRecommendation {
+  disease: string;
+  medications: {
+    name: string;
+    dosage: string;
+    description: string;
+  }[];
+  exercises: {
+    name: string;
+    frequency: string;
+    description: string;
+  }[];
+  lifestyle: string[];
+}
+
 export interface HealthAnalysis {
   healthScore: number;
   abnormalMarkers: number;

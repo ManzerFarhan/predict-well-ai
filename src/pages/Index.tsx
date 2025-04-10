@@ -7,6 +7,7 @@ import HealthMetricsTable from "@/components/HealthMetricsTable";
 import AnalysisSummary from "@/components/AnalysisSummary";
 import PredictionCharts from "@/components/PredictionCharts";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
+import HealthChatbot from "@/components/HealthChatbot";
 import { analyzeBloodTest } from "@/services/mockHealthService";
 import { HealthAnalysis } from "@/types/health";
 import { Button } from "@/components/ui/button";
@@ -166,6 +167,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      <HealthChatbot />
     </div>
   );
 };

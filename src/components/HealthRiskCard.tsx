@@ -74,8 +74,7 @@ const HealthRiskCard = ({
           </div>
           <Progress
             value={probability}
-            className="h-2"
-            indicatorClassName={riskColorMap[riskLevel]}
+            className={`h-2 ${riskColorMap[riskLevel]}`}
           />
         </div>
         <p className="text-xs text-muted-foreground mt-2">{description}</p>
