@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import FileUpload from "@/components/FileUpload";
 import HealthRiskCard from "@/components/HealthRiskCard";
@@ -11,9 +12,12 @@ import HealthChatbot from "@/components/HealthChatbot";
 import { analyzeBloodTest } from "@/services/mockHealthService";
 import { HealthAnalysis } from "@/types/health";
 import { Button } from "@/components/ui/button";
-import { Download, FileSpreadsheet, RefreshCw } from "lucide-react";
+import { Download, FileSpreadsheet, RefreshCw, UserPlus, FileText } from "lucide-react";
+import { generatePDF } from "@/utils/reportGenerator";
+import { toast } from "sonner";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<HealthAnalysis | null>(null);
@@ -26,9 +30,12 @@ const Index = () => {
     try {
       const result = await analyzeBloodTest(uploadedFile);
       setAnalysis(result);
+      toast.success("Analysis completed successfully!");
     } catch (error) {
       console.error("Error analyzing file:", error);
-      // Error handling would go here
+      toast.error("Failed to analyze file", {
+        description: "Please try again with a different file format."
+      });
     } finally {
       setIsAnalyzing(false);
     }
@@ -40,8 +47,20 @@ const Index = () => {
   };
 
   const handleDownloadReport = () => {
+    if (!analysis) return;
+    
+    // Show toast to indicate download started
+    toast.success("Preparing your health report...");
+    
     // In a real implementation, this would generate a PDF report
-    alert("In a real implementation, this would download a PDF report of your health analysis.");
+    setTimeout(() => {
+      generatePDF(analysis);
+      toast.success("Report downloaded successfully!");
+    }, 1000);
+  };
+
+  const handleBookConsultation = () => {
+    navigate("/doctor-consultation");
   };
 
   return (
@@ -101,9 +120,17 @@ const Index = () => {
                     <RefreshCw className="h-4 w-4 mr-2" />
                     New Analysis
                   </Button>
-                  <Button onClick={handleDownloadReport}>
-                    <Download className="h-4 w-4 mr-2" />
+                  <Button 
+                    variant="outline" 
+                    onClick={handleDownloadReport}
+                    className="border-medical-500 text-medical-700 hover:bg-medical-50"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
                     Download Report
+                  </Button>
+                  <Button onClick={handleBookConsultation}>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Book Doctor Consultation
                   </Button>
                 </div>
               </div>
@@ -141,6 +168,17 @@ const Index = () => {
 
               <h2 className="text-xl font-semibold mb-4">Blood Test Markers</h2>
               <HealthMetricsTable metrics={analysis.metrics} />
+
+              <div className="flex justify-center mt-8">
+                <Button 
+                  onClick={handleBookConsultation}
+                  className="bg-medical-600 hover:bg-medical-700"
+                  size="lg"
+                >
+                  <UserPlus className="h-5 w-5 mr-2" />
+                  Book Doctor Consultation to Discuss Results
+                </Button>
+              </div>
 
               <div className="mt-8 p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
                 <h3 className="text-sm font-medium text-yellow-800 mb-1">Disclaimer</h3>

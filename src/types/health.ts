@@ -43,6 +43,22 @@ export interface HealthRecommendation {
   lifestyle: string[];
 }
 
+export interface Medication {
+  name: string;
+  dosage: string;
+  description: string;
+  sideEffects: string[];
+  contraindications: string[];
+}
+
+export interface Exercise {
+  name: string;
+  frequency: string;
+  description: string;
+  benefits: string[];
+  cautions: string[];
+}
+
 export interface HealthAnalysis {
   healthScore: number;
   abnormalMarkers: number;
