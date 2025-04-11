@@ -1,8 +1,9 @@
 
 import { useState, useRef, DragEvent, ChangeEvent } from "react";
-import { Upload, FilePlus, FileSpreadsheet, FileText } from "lucide-react";
+import { Upload, FilePlus, FileSpreadsheet, FileText, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -101,6 +102,17 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
           PDF
         </div>
       </div>
+      
+      <div className="bg-blue-50 p-3 rounded-md mb-4 text-xs text-blue-800 flex items-start">
+        <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+        <p className="text-left">
+          For demo purposes, include any of these keywords in your filename for different analysis results: 
+          <span className="font-semibold block mt-1">
+            diabetes, heart, cholesterol, liver, kidney
+          </span>
+        </p>
+      </div>
+      
       <Button
         variant="outline"
         onClick={() => fileInputRef.current?.click()}

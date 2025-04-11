@@ -80,14 +80,9 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Two-section layout for initial view */}
+          {/* Two-section layout for initial view - SWAPPED LEFT AND RIGHT COLUMNS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            {/* Left column - Contains appointments list */}
-            <div className="lg:col-span-5">
-              <AppointmentsList appointments={appointments} />
-            </div>
-            
-            {/* Right column - Contains upload section */}
+            {/* Left column - Contains upload section (previously on right) */}
             <div className="lg:col-span-7">
               <div className="bg-white p-6 rounded-lg shadow-sm border">
                 <h2 className="text-xl font-semibold mb-4">Upload Blood Test Report</h2>
@@ -135,6 +130,11 @@ const Index = () => {
                   </>
                 )}
               </div>
+            </div>
+            
+            {/* Right column - Contains appointments list (previously on left) */}
+            <div className="lg:col-span-5">
+              <AppointmentsList appointments={appointments} />
             </div>
           </div>
 
