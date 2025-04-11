@@ -10,9 +10,10 @@ import PredictionCharts from "@/components/PredictionCharts";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
 import HealthChatbot from "@/components/HealthChatbot";
 import AppointmentsList from "@/components/AppointmentsList";
+import PatientProfileSection from "@/components/PatientProfileSection";
 import { analyzeBloodTest } from "@/services/mockHealthService";
-import { getMockAppointments } from "@/services/mockPatientService";
-import { HealthAnalysis } from "@/types/health";
+import { getMockAppointments, getMockPatientProfile } from "@/services/mockPatientService";
+import { HealthAnalysis, PatientProfile } from "@/types/health";
 import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, RefreshCw, UserPlus, FileText } from "lucide-react";
 import { generatePDF } from "@/utils/reportGenerator";
@@ -23,6 +24,7 @@ const Index = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<HealthAnalysis | null>(null);
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
   
   const appointments = getMockAppointments();
 
@@ -34,6 +36,8 @@ const Index = () => {
     try {
       const result = await analyzeBloodTest(uploadedFile);
       setAnalysis(result);
+      // Load patient profile after successful analysis
+      setPatientProfile(getMockPatientProfile());
       toast.success("Analysis completed successfully!");
     } catch (error) {
       console.error("Error analyzing file:", error);
@@ -48,6 +52,7 @@ const Index = () => {
   const handleReset = () => {
     setFile(null);
     setAnalysis(null);
+    setPatientProfile(null);
   };
 
   const handleDownloadReport = () => {
@@ -152,7 +157,10 @@ const Index = () => {
                 />
               </div>
               
-              {/* Removed the duplicate appointments list that was here */}
+              {/* Display Patient Profile after analysis */}
+              {patientProfile && (
+                <PatientProfileSection profile={patientProfile} />
+              )}
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-3">
