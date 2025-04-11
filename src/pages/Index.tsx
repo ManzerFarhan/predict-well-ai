@@ -9,10 +9,9 @@ import AnalysisSummary from "@/components/AnalysisSummary";
 import PredictionCharts from "@/components/PredictionCharts";
 import LoadingAnalysis from "@/components/LoadingAnalysis";
 import HealthChatbot from "@/components/HealthChatbot";
-import PatientProfile from "@/components/PatientProfile";
 import AppointmentsList from "@/components/AppointmentsList";
 import { analyzeBloodTest } from "@/services/mockHealthService";
-import { getMockPatientProfile, getMockAppointments } from "@/services/mockPatientService";
+import { getMockAppointments } from "@/services/mockPatientService";
 import { HealthAnalysis } from "@/types/health";
 import { Button } from "@/components/ui/button";
 import { Download, FileSpreadsheet, RefreshCw, UserPlus, FileText } from "lucide-react";
@@ -25,7 +24,6 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<HealthAnalysis | null>(null);
   
-  const patientProfile = getMockPatientProfile();
   const appointments = getMockAppointments();
 
   const handleFileUpload = async (uploadedFile: File) => {
@@ -82,11 +80,15 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Three-section layout */}
+          {/* Two-section layout for initial view */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            {/* Left column - Contains upload section and appointments */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              {/* Upload Blood Test Section */}
+            {/* Left column - Contains appointments list */}
+            <div className="lg:col-span-5">
+              <AppointmentsList appointments={appointments} />
+            </div>
+            
+            {/* Right column - Contains upload section */}
+            <div className="lg:col-span-7">
               <div className="bg-white p-6 rounded-lg shadow-sm border">
                 <h2 className="text-xl font-semibold mb-4">Upload Blood Test Report</h2>
                 {!file && !analysis && !isAnalyzing && (
@@ -133,34 +135,28 @@ const Index = () => {
                   </>
                 )}
               </div>
-              
-              {/* Appointments Section */}
-              <AppointmentsList appointments={appointments} />
-            </div>
-            
-            {/* Right column - Patient Profile */}
-            <div className="lg:col-span-5">
-              <PatientProfile profile={patientProfile} />
-              
-              {/* Display Analysis Summary if available */}
-              {analysis && !isAnalyzing && (
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold mb-4">Health Analysis</h2>
-                  <AnalysisSummary 
-                    healthScore={analysis.healthScore}
-                    abnormalMarkers={analysis.abnormalMarkers}
-                    normalMarkers={analysis.normalMarkers}
-                    criticalMarkers={analysis.criticalMarkers}
-                    recommendations={analysis.recommendations}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
           {/* Analysis Results - Show only when there's an analysis */}
           {analysis && !isAnalyzing && (
             <>
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold mb-4">Health Analysis</h2>
+                <AnalysisSummary 
+                  healthScore={analysis.healthScore}
+                  abnormalMarkers={analysis.abnormalMarkers}
+                  normalMarkers={analysis.normalMarkers}
+                  criticalMarkers={analysis.criticalMarkers}
+                  recommendations={analysis.recommendations}
+                />
+              </div>
+              
+              {/* Display Appointments after the summary */}
+              <div className="mb-8">
+                <AppointmentsList appointments={appointments} />
+              </div>
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-3">
                   <PredictionCharts 
