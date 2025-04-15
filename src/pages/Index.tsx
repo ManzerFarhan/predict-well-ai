@@ -32,6 +32,7 @@ const Index = () => {
     setAnalysis(null);
     
     try {
+      // Clear any previous analysis before running a new one
       const result = await analyzeBloodTest(uploadedFile);
       setAnalysis(result);
       toast.success("Analysis completed successfully!");
@@ -80,9 +81,9 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Two-section layout for initial view - SWAPPED LEFT AND RIGHT COLUMNS */}
+          {/* Two-section layout for initial view - Left upload, Right appointments */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            {/* Left column - Contains upload section (previously on right) */}
+            {/* Left column - Contains upload section */}
             <div className="lg:col-span-7">
               <div className="bg-white p-6 rounded-lg shadow-sm border">
                 <h2 className="text-xl font-semibold mb-4">Upload Blood Test Report</h2>
@@ -100,14 +101,14 @@ const Index = () => {
                       <div>
                         <div className="flex items-center gap-2">
                           <FileSpreadsheet className="h-5 w-5 text-medical-500" />
-                          <h2 className="font-medium">{file?.name}</h2>
+                          <h2 className="font-medium truncate max-w-[200px] sm:max-w-[300px]">{file?.name}</h2>
                         </div>
                         <p className="text-sm text-muted-foreground">
                           Uploaded on {new Date().toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" onClick={handleReset} size="sm">
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <Button variant="outline" onClick={handleReset} size="sm" className="flex-1 sm:flex-initial">
                           <RefreshCw className="h-4 w-4 mr-2" />
                           New Analysis
                         </Button>
@@ -115,7 +116,7 @@ const Index = () => {
                           variant="outline" 
                           onClick={handleDownloadReport}
                           size="sm"
-                          className="border-medical-500 text-medical-700 hover:bg-medical-50"
+                          className="border-medical-500 text-medical-700 hover:bg-medical-50 flex-1 sm:flex-initial"
                         >
                           <FileText className="h-4 w-4 mr-2" />
                           Download PDF
@@ -132,7 +133,7 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Right column - Contains appointments list (previously on left) */}
+            {/* Right column - Contains appointments list */}
             <div className="lg:col-span-5">
               <AppointmentsList appointments={appointments} />
             </div>

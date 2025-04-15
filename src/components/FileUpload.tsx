@@ -45,7 +45,9 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
   };
 
   const validateAndUploadFile = (file: File) => {
-    if (!allowedFileTypes.includes(file.type)) {
+    // For demo purposes, let's accept any file type with appropriate extension
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    if (!fileExtension || !['csv', 'xlsx', 'xls', 'pdf'].includes(fileExtension)) {
       toast.error("Please upload a CSV, Excel, or PDF file.", {
         description: "Only these file formats are supported."
       });
@@ -103,12 +105,17 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
         </div>
       </div>
       
-      <div className="bg-blue-50 p-3 rounded-md mb-4 text-xs text-blue-800 flex items-start">
-        <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+      <div className="bg-yellow-50 p-3 rounded-md mb-4 text-xs text-yellow-800 flex items-start">
+        <Info className="h-4 w-4 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
         <p className="text-left">
-          For demo purposes, include any of these keywords in your filename for different analysis results: 
-          <span className="font-semibold block mt-1">
-            diabetes, heart, cholesterol, liver, kidney
+          <span className="font-semibold block mb-1">Test Our Analysis With Special Filenames:</span>
+          Include any of these keywords in your filename for different analysis results:
+          <span className="flex flex-wrap gap-2 mt-1">
+            <span className="inline-block px-2 py-0.5 bg-yellow-100 rounded text-yellow-800 font-medium">diabetes</span>
+            <span className="inline-block px-2 py-0.5 bg-yellow-100 rounded text-yellow-800 font-medium">heart</span>
+            <span className="inline-block px-2 py-0.5 bg-yellow-100 rounded text-yellow-800 font-medium">cholesterol</span>
+            <span className="inline-block px-2 py-0.5 bg-yellow-100 rounded text-yellow-800 font-medium">liver</span>
+            <span className="inline-block px-2 py-0.5 bg-yellow-100 rounded text-yellow-800 font-medium">kidney</span>
           </span>
         </p>
       </div>
