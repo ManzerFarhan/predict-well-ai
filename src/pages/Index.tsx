@@ -29,11 +29,12 @@ const Index = () => {
   const handleFileUpload = async (uploadedFile: File) => {
     setFile(uploadedFile);
     setIsAnalyzing(true);
-    setAnalysis(null);
+    setAnalysis(null); // Clear previous analysis
     
     try {
-      // Clear any previous analysis before running a new one
+      console.log("Analyzing file:", uploadedFile.name);
       const result = await analyzeBloodTest(uploadedFile);
+      console.log("Analysis result:", result);
       setAnalysis(result);
       toast.success("Analysis completed successfully!");
     } catch (error) {
@@ -96,8 +97,8 @@ const Index = () => {
                 )}
                 
                 {analysis && !isAnalyzing && (
-                  <>
-                    <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                       <div>
                         <div className="flex items-center gap-2">
                           <FileSpreadsheet className="h-5 w-5 text-medical-500" />
@@ -107,8 +108,8 @@ const Index = () => {
                           Uploaded on {new Date().toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <Button variant="outline" onClick={handleReset} size="sm" className="flex-1 sm:flex-initial">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                        <Button variant="outline" onClick={handleReset} size="sm" className="w-full sm:w-auto">
                           <RefreshCw className="h-4 w-4 mr-2" />
                           New Analysis
                         </Button>
@@ -116,7 +117,7 @@ const Index = () => {
                           variant="outline" 
                           onClick={handleDownloadReport}
                           size="sm"
-                          className="border-medical-500 text-medical-700 hover:bg-medical-50 flex-1 sm:flex-initial"
+                          className="border-medical-500 text-medical-700 hover:bg-medical-50 w-full sm:w-auto"
                         >
                           <FileText className="h-4 w-4 mr-2" />
                           Download PDF
@@ -128,7 +129,7 @@ const Index = () => {
                       <UserPlus className="h-4 w-4 mr-2" />
                       Book Doctor Consultation
                     </Button>
-                  </>
+                  </div>
                 )}
               </div>
             </div>

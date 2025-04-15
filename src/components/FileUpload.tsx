@@ -63,7 +63,24 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
     }
     
     onFileUpload(file);
-    toast.success("File uploaded successfully", {
+    
+    // Determine which type of test was uploaded based on filename
+    const fileName = file.name.toLowerCase();
+    let testType = "general";
+    
+    if (fileName.includes("diabetes")) {
+      testType = "diabetes";
+    } else if (fileName.includes("heart")) {
+      testType = "heart";
+    } else if (fileName.includes("cholesterol")) {
+      testType = "cholesterol";
+    } else if (fileName.includes("liver")) {
+      testType = "liver";
+    } else if (fileName.includes("kidney")) {
+      testType = "kidney";
+    }
+    
+    toast.success(`${testType.charAt(0).toUpperCase() + testType.slice(1)} test uploaded successfully`, {
       description: `Analyzing "${file.name}"...`
     });
   };
@@ -79,7 +96,7 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
   return (
     <div
       className={`file-upload-container border-2 border-dashed rounded-lg p-10 text-center transition-all ${
-        dragging ? "dragging" : "border-gray-300 hover:border-medical-300"
+        dragging ? "border-medical-500 bg-medical-50" : "border-gray-300 hover:border-medical-300"
       }`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -123,7 +140,7 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
       <Button
         variant="outline"
         onClick={() => fileInputRef.current?.click()}
-        className="bg-white hover:bg-gray-50"
+        className="bg-white hover:bg-gray-50 w-full sm:w-auto"
       >
         <Upload className="h-4 w-4 mr-2 upload-icon" />
         Choose File
