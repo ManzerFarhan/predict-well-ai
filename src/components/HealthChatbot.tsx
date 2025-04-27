@@ -30,6 +30,23 @@ const HealthChatbot = () => {
   const [open, setOpen] = useState(false);
   const GEMINI_API_KEY = "AIzaSyDzLWIPFPesO-mW81myJNBdEbQGuY6dJVk";
 
+  useEffect(() => {
+    if (open) {
+      const helpMessage: Message = {
+        id: "help-prompt",
+        sender: "bot",
+        text: "How may I help you today?"
+      };
+      
+      setMessages(prevMessages => {
+        const hasHelpMessage = prevMessages.some(msg => msg.id === "help-prompt");
+        return hasHelpMessage 
+          ? prevMessages 
+          : [...prevMessages, helpMessage];
+      });
+    }
+  }, [open]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
