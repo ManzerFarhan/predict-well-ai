@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,13 +25,7 @@ const HealthChatbot = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions] = useState<string[]>([
-    "What medications can help with high cholesterol?",
-    "Exercises for improving heart health",
-    "How to manage diabetes?",
-    "What are the latest developments in cancer research?",
-    "Tell me about healthy eating habits"
-  ]);
+  const [suggestions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const GEMINI_API_KEY = "AIzaSyDzLWIPFPesO-mW81myJNBdEbQGuY6dJVk";
@@ -216,25 +209,6 @@ const HealthChatbot = () => {
             <div ref={messagesEndRef} />
           </div>
         </div>
-        
-        {suggestions.length > 0 && (
-          <div className="px-4 py-2 border-t">
-            <p className="text-xs text-gray-500 mb-2">Try asking about:</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestions.map((suggestion, index) => (
-                <Button 
-                  key={index} 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-xs h-auto py-1 px-2"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
         
         <div className="p-4 border-t mt-auto">
           <div className="flex gap-2">
