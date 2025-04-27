@@ -1,12 +1,12 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
+import { MessageCircle, SendHorizontal } from "lucide-react";
 import { getHealthRecommendations } from "@/services/mockHealthRecommendations";
-import { MessageCircle, SendHorizontal, PlusCircle, X } from "lucide-react";
 import { HealthRecommendation } from "@/types/health";
+import { getGeminiResponse } from "@/utils/geminiAI";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -20,16 +20,18 @@ const HealthChatbot = () => {
     {
       id: "welcome",
       sender: "bot",
-      text: "👋 Hi! I'm your health assistant. Ask me about medication and exercise recommendations for specific conditions based on your results."
+      text: "👋 Hi! I'm your AI health assistant powered by Gemini. I can help with health recommendations and answer general questions!"
     }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([
+  const [apiKey, setApiKey] = useState<string>("");
+  const [suggestions] = useState<string[]>([
     "What medications can help with high cholesterol?",
     "Exercises for improving heart health",
     "How to manage diabetes?",
-    "Recommend diet for high blood pressure"
+    "What are the latest developments in cancer research?",
+    "Tell me about healthy eating habits"
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -54,48 +56,59 @@ const HealthChatbot = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
-    
-    // Simulate API delay
-    setTimeout(async () => {
-      try {
-        const lowerInput = input.toLowerCase();
+
+    try {
+      const lowerInput = input.toLowerCase();
+      if (lowerInput.includes("cholesterol") || 
+          lowerInput.includes("diabetes") || 
+          lowerInput.includes("blood pressure") || 
+          lowerInput.includes("anemia") || 
+          lowerInput.includes("thyroid")) {
         let disease = "";
-        
-        if (lowerInput.includes("cholesterol") || lowerInput.includes("lipid")) {
+        if (lowerInput.includes("cholesterol")) {
           disease = "High Cholesterol";
-        } else if (lowerInput.includes("diabetes") || lowerInput.includes("sugar")) {
+        } else if (lowerInput.includes("diabetes")) {
           disease = "Diabetes";
-        } else if (lowerInput.includes("blood pressure") || lowerInput.includes("hypertension")) {
+        } else if (lowerInput.includes("blood pressure")) {
           disease = "Hypertension";
-        } else if (lowerInput.includes("anemia") || lowerInput.includes("iron")) {
+        } else if (lowerInput.includes("anemia")) {
           disease = "Anemia";
         } else if (lowerInput.includes("thyroid")) {
           disease = "Thyroid Disorder";
-        } else {
-          disease = "General Health";
         }
         
         const recommendations = await getHealthRecommendations(disease);
-        
         const botMessage: Message = {
           id: Date.now().toString(),
           sender: "bot",
           text: `Here are some recommendations for ${disease}:`,
           recommendations: recommendations
         };
-        
         setMessages(prev => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
+      } else {
+        if (!apiKey) {
+          toast.error("Please enter your Gemini API key in the settings first");
+          return;
+        }
+        
+        const geminiResponse = await getGeminiResponse(input, apiKey);
+        const botMessage: Message = {
           id: Date.now().toString(),
           sender: "bot",
-          text: "I'm sorry, I couldn't process your request. Please try again."
+          text: geminiResponse
         };
-        setMessages(prev => [...prev, errorMessage]);
-      } finally {
-        setIsLoading(false);
+        setMessages(prev => [...prev, botMessage]);
       }
-    }, 1500);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        sender: "bot",
+        text: "I'm sorry, I couldn't process your request. Please try again."
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -122,14 +135,23 @@ const HealthChatbot = () => {
       </SheetTrigger>
       <SheetContent className="sm:max-w-md p-0 flex flex-col h-full">
         <SheetHeader className="px-4 py-3 border-b">
-          <SheetTitle className="flex items-center">
+          <SheetTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-medical-500">
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                 <path d="M3.22 12H9.5l.5-1 .5 1h6.28"></path>
               </svg>
-              Health Assistant
+              Health Assistant + Gemini AI
             </div>
+            {!apiKey && (
+              <Input
+                type="password"
+                placeholder="Enter Gemini API Key"
+                className="w-48 h-8 text-xs"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+              />
+            )}
           </SheetTitle>
         </SheetHeader>
         
@@ -230,7 +252,7 @@ const HealthChatbot = () => {
         <div className="p-4 border-t mt-auto">
           <div className="flex gap-2">
             <Input
-              placeholder="Ask about a health condition..."
+              placeholder="Ask about health or any topic..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
