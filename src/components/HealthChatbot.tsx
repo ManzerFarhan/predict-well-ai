@@ -25,7 +25,6 @@ const HealthChatbot = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [apiKey, setApiKey] = useState<string>("");
   const [suggestions] = useState<string[]>([
     "What medications can help with high cholesterol?",
     "Exercises for improving heart health",
@@ -35,6 +34,7 @@ const HealthChatbot = () => {
   ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const GEMINI_API_KEY = "AIzaSyDzLWIPFPesO-mW81myJNBdEbQGuY6dJVk";
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -86,12 +86,7 @@ const HealthChatbot = () => {
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
-        if (!apiKey) {
-          toast.error("Please enter your Gemini API key in the settings first");
-          return;
-        }
-        
-        const geminiResponse = await getGeminiResponse(input, apiKey);
+        const geminiResponse = await getGeminiResponse(input, GEMINI_API_KEY);
         const botMessage: Message = {
           id: Date.now().toString(),
           sender: "bot",
