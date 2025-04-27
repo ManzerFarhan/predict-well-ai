@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,15 +139,6 @@ const HealthChatbot = () => {
               </svg>
               Health Assistant + Gemini AI
             </div>
-            {!apiKey && (
-              <Input
-                type="password"
-                placeholder="Enter Gemini API Key"
-                className="w-48 h-8 text-xs"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-            )}
           </SheetTitle>
         </SheetHeader>
         
