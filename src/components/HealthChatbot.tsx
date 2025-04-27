@@ -1,51 +1,19 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { MessageCircle, SendHorizontal } from "lucide-react";
-import { getHealthRecommendations } from "@/services/mockHealthRecommendations";
-import { HealthRecommendation } from "@/types/health";
-import { getGeminiResponse } from "@/utils/geminiAI";
-import { toast } from "sonner";
-
-interface Message {
-  id: string;
-  sender: "user" | "bot";
-  text: string;
-  recommendations?: HealthRecommendation | null;
-}
+import { MessageCircle } from "lucide-react";
+import { useMessages } from "@/hooks/useMessages";
+import { useChatActions } from "@/hooks/useChatActions";
+import { ChatMessage } from "./ChatMessage";
+import { ChatInput } from "./ChatInput";
 
 const HealthChatbot = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      sender: "bot",
-      text: "👋 Hi! I'm your AI health assistant powered by Gemini. I can help with health recommendations and answer general questions!"
-    }
-  ]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [suggestions] = useState<string[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const GEMINI_API_KEY = "AIzaSyDzLWIPFPesO-mW81myJNBdEbQGuY6dJVk";
-
-  useEffect(() => {
-    if (open) {
-      const helpMessage: Message = {
-        id: "help-prompt",
-        sender: "bot",
-        text: "How may I help you today?"
-      };
-      
-      setMessages(prevMessages => {
-        const hasHelpMessage = prevMessages.some(msg => msg.id === "help-prompt");
-        return hasHelpMessage 
-          ? prevMessages 
-          : [...prevMessages, helpMessage];
-      });
-    }
-  }, [open]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { messages, setMessages } = useMessages(open);
+  const { isLoading, processMessage } = useChatActions(setMessages);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,64 +25,9 @@ const HealthChatbot = () => {
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      sender: "user",
-      text: input
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput("");
-    setIsLoading(true);
-
-    try {
-      const lowerInput = input.toLowerCase();
-      if (lowerInput.includes("cholesterol") || 
-          lowerInput.includes("diabetes") || 
-          lowerInput.includes("blood pressure") || 
-          lowerInput.includes("anemia") || 
-          lowerInput.includes("thyroid")) {
-        let disease = "";
-        if (lowerInput.includes("cholesterol")) {
-          disease = "High Cholesterol";
-        } else if (lowerInput.includes("diabetes")) {
-          disease = "Diabetes";
-        } else if (lowerInput.includes("blood pressure")) {
-          disease = "Hypertension";
-        } else if (lowerInput.includes("anemia")) {
-          disease = "Anemia";
-        } else if (lowerInput.includes("thyroid")) {
-          disease = "Thyroid Disorder";
-        }
-        
-        const recommendations = await getHealthRecommendations(disease);
-        const botMessage: Message = {
-          id: Date.now().toString(),
-          sender: "bot",
-          text: `Here are some recommendations for ${disease}:`,
-          recommendations: recommendations
-        };
-        setMessages(prev => [...prev, botMessage]);
-      } else {
-        const geminiResponse = await getGeminiResponse(input, GEMINI_API_KEY);
-        const botMessage: Message = {
-          id: Date.now().toString(),
-          sender: "bot",
-          text: geminiResponse
-        };
-        setMessages(prev => [...prev, botMessage]);
-      }
-    } catch (error) {
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        sender: "bot",
-        text: "I'm sorry, I couldn't process your request. Please try again."
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
+    await processMessage(currentInput);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -122,11 +35,6 @@ const HealthChatbot = () => {
       e.preventDefault();
       handleSend();
     }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setInput(suggestion);
-    handleSend();
   };
 
   return (
@@ -155,62 +63,7 @@ const HealthChatbot = () => {
         <div className="flex-1 overflow-y-auto px-4 py-4">
           <div className="space-y-4">
             {messages.map((message) => (
-              <div 
-                key={message.id} 
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div 
-                  className={`max-w-[85%] rounded-lg px-4 py-2 
-                    ${message.sender === "user" 
-                      ? "bg-medical-500 text-white" 
-                      : "bg-gray-100 text-gray-800"}`}
-                >
-                  <p>{message.text}</p>
-                  
-                  {message.recommendations && (
-                    <div className="mt-3 space-y-3">
-                      {message.recommendations.medications.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-sm">Medications:</h4>
-                          <ul className="list-disc list-inside text-sm mt-1 space-y-1">
-                            {message.recommendations.medications.map((med, idx) => (
-                              <li key={idx}>
-                                <span className="font-medium">{med.name}</span> ({med.dosage})
-                                <p className="text-xs ml-5">{med.description}</p>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {message.recommendations.exercises.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-sm">Exercises:</h4>
-                          <ul className="list-disc list-inside text-sm mt-1 space-y-1">
-                            {message.recommendations.exercises.map((ex, idx) => (
-                              <li key={idx}>
-                                <span className="font-medium">{ex.name}</span> ({ex.frequency})
-                                <p className="text-xs ml-5">{ex.description}</p>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {message.recommendations.lifestyle.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-sm">Lifestyle Changes:</h4>
-                          <ul className="list-disc list-inside text-sm mt-1">
-                            {message.recommendations.lifestyle.map((item, idx) => (
-                              <li key={idx}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ChatMessage key={message.id} message={message} />
             ))}
             {isLoading && (
               <div className="flex justify-start">
@@ -227,21 +80,13 @@ const HealthChatbot = () => {
           </div>
         </div>
         
-        <div className="p-4 border-t mt-auto">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Ask about health or any topic..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="flex-1"
-              disabled={isLoading}
-            />
-            <Button onClick={handleSend} disabled={isLoading} size="icon">
-              <SendHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <ChatInput
+          input={input}
+          setInput={setInput}
+          handleSend={handleSend}
+          isLoading={isLoading}
+          onKeyDown={handleKeyDown}
+        />
       </SheetContent>
     </Sheet>
   );
