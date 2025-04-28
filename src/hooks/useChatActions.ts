@@ -4,9 +4,8 @@ import { Message } from "./useMessages";
 import { getHealthRecommendations } from "@/services/mockHealthRecommendations";
 import { getGeminiResponse } from "@/utils/geminiAI";
 
-export const useChatActions = (setMessages: (messages: Message[]) => void) => {
+export const useChatActions = (setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
   const [isLoading, setIsLoading] = useState(false);
-  const GEMINI_API_KEY = "AIzaSyDzLWIPFPesO-mW81myJNBdEbQGuY6dJVk";
 
   const processMessage = async (input: string) => {
     if (!input.trim()) return;
@@ -47,15 +46,15 @@ export const useChatActions = (setMessages: (messages: Message[]) => void) => {
           text: `Here are some recommendations for ${disease}:`,
           recommendations: recommendations
         };
-        setMessages(prev => [...prev, botMessage]);
+        setMessages(prev => [...prev as Message[], botMessage]);
       } else {
-        const geminiResponse = await getGeminiResponse(input, GEMINI_API_KEY);
+        const geminiResponse = await getGeminiResponse(input);
         const botMessage: Message = {
           id: Date.now().toString(),
           sender: "bot",
           text: geminiResponse
         };
-        setMessages(prev => [...prev, botMessage]);
+        setMessages(prev => [...prev as Message[], botMessage]);
       }
     } catch (error) {
       const errorMessage: Message = {
@@ -63,7 +62,7 @@ export const useChatActions = (setMessages: (messages: Message[]) => void) => {
         sender: "bot",
         text: "I'm sorry, I couldn't process your request. Please try again."
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev as Message[], errorMessage]);
     } finally {
       setIsLoading(false);
     }
