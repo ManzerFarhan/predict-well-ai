@@ -53,8 +53,23 @@ const AboutUs = () => {
               
               <h3 className="text-xl font-semibold mt-4">Our Team</h3>
               <p>
-                PredictWell AI was founded by a team of healthcare professionals, data scientists, and AI specialists committed to making 
-                preventive healthcare more accessible and effective through technology.
+                PredictWell AI was developed by a dedicated group of BTech second year students specializing in Artificial Intelligence 
+                and Data Science. This project represents the culmination of their coursework in machine learning, data analysis, 
+                and healthcare informatics.
+              </p>
+              <p>
+                The team applied their knowledge of:
+              </p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Machine learning algorithms and neural networks</li>
+                <li>Data preprocessing and feature engineering</li>
+                <li>Healthcare analytics and biostatistics</li>
+                <li>User experience design for healthcare applications</li>
+              </ul>
+              <p>
+                Throughout the development process, the students worked closely with faculty advisors and healthcare professionals to 
+                ensure the accuracy and reliability of their prediction models. Their innovative approach to diabetes risk assessment 
+                demonstrates the potential for AI-driven solutions in preventive healthcare.
               </p>
               
               <div className="mt-6 text-sm text-gray-500">
