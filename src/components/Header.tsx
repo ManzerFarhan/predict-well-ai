@@ -56,11 +56,6 @@ const Header = () => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/lab-reports" className="cursor-pointer flex w-full">
-                  My Lab Reports & Tests
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
                 <Link to="/appointments" className="cursor-pointer flex w-full">
                   My Appointments
                 </Link>
