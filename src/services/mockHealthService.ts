@@ -9,32 +9,32 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
       // Generate different analysis based on the file name
       const fileName = file.name.toLowerCase();
       
-      // Default analysis (original)
+      // Default analysis (original) with updated blood test marker values
       let analysis: HealthAnalysis = {
-        healthScore: 78,
-        abnormalMarkers: 4,
-        normalMarkers: 12,
-        criticalMarkers: 1,
+        healthScore: 65, // Adjusted due to updated values
+        abnormalMarkers: 6,
+        normalMarkers: 8,
+        criticalMarkers: 2,
         recommendations: [
-          "Consult with your healthcare provider about your elevated glucose levels.",
+          "Consult with an endocrinologist about your elevated glucose and HbA1c levels.",
           "Consider a low-sodium diet to help manage blood pressure.",
           "Regular physical activity (150 minutes/week) is recommended.",
-          "Schedule a follow-up in 3 months to monitor cholesterol levels."
+          "Schedule a follow-up in 1 month to monitor diabetes management."
         ],
         metrics: [
           {
             id: "glu",
             name: "Glucose",
-            value: "140",
+            value: "204",
             unit: "mg/dL",
             normalRange: "70-99 mg/dL",
             status: "high",
-            info: "Blood sugar levels higher than normal range may indicate prediabetes or diabetes."
+            info: "Blood sugar levels significantly higher than normal range, indicating diabetes."
           },
           {
             id: "chol",
             name: "Total Cholesterol",
-            value: "210",
+            value: "209",
             unit: "mg/dL",
             normalRange: "<200 mg/dL",
             status: "high",
@@ -43,7 +43,7 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "hdl",
             name: "HDL Cholesterol",
-            value: "55",
+            value: "70",
             unit: "mg/dL",
             normalRange: ">40 mg/dL",
             status: "normal",
@@ -52,7 +52,7 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "ldl",
             name: "LDL Cholesterol",
-            value: "130",
+            value: "107.61",
             unit: "mg/dL",
             normalRange: "<100 mg/dL",
             status: "high",
@@ -61,43 +61,25 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "trig",
             name: "Triglycerides",
-            value: "120",
+            value: "157",
             unit: "mg/dL",
             normalRange: "<150 mg/dL",
-            status: "normal",
-            info: "Triglycerides are a type of fat found in your blood."
+            status: "high",
+            info: "Triglycerides are a type of fat found in your blood. Elevated levels increase risk of heart disease."
           },
           {
             id: "hgb",
             name: "Hemoglobin",
-            value: "14.2",
+            value: "11.2",
             unit: "g/dL",
             normalRange: "13.5-17.5 g/dL",
-            status: "normal",
-            info: "Hemoglobin is a protein in your red blood cells that carries oxygen to your body's organs and tissues."
-          },
-          {
-            id: "wbc",
-            name: "White Blood Cells",
-            value: "6.8",
-            unit: "10³/µL",
-            normalRange: "4.5-11.0 10³/µL",
-            status: "normal",
-            info: "White blood cells help your body fight infection."
-          },
-          {
-            id: "plt",
-            name: "Platelets",
-            value: "250",
-            unit: "10³/µL",
-            normalRange: "150-450 10³/µL",
-            status: "normal",
-            info: "Platelets help your blood clot."
+            status: "low",
+            info: "Hemoglobin is a protein in your red blood cells that carries oxygen. Low levels may indicate anemia."
           },
           {
             id: "crp",
             name: "C-Reactive Protein",
-            value: "4.2",
+            value: "4.6",
             unit: "mg/L",
             normalRange: "<3.0 mg/L",
             status: "high",
@@ -106,7 +88,7 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "bun",
             name: "Blood Urea Nitrogen",
-            value: "15",
+            value: "9.2",
             unit: "mg/dL",
             normalRange: "7-20 mg/dL",
             status: "normal",
@@ -115,7 +97,7 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "cre",
             name: "Creatinine",
-            value: "0.9",
+            value: "0.87",
             unit: "mg/dL",
             normalRange: "0.6-1.2 mg/dL",
             status: "normal",
@@ -124,7 +106,7 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "gfr",
             name: "GFR",
-            value: "90",
+            value: "99.39",
             unit: "mL/min/1.73m²",
             normalRange: ">90 mL/min/1.73m²",
             status: "normal",
@@ -133,78 +115,78 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
           {
             id: "alt",
             name: "ALT",
-            value: "35",
+            value: "22.31",
             unit: "U/L",
             normalRange: "7-56 U/L",
             status: "normal",
-            info: "ALT is an enzyme found primarily in the liver. Elevated levels may indicate liver damage."
+            info: "ALT is an enzyme found primarily in the liver. Normal levels indicate healthy liver function."
           },
           {
             id: "ast",
             name: "AST",
-            value: "30",
+            value: "18.5",
             unit: "U/L",
             normalRange: "10-40 U/L",
             status: "normal",
-            info: "AST is an enzyme found in the liver, heart, and muscles. Elevated levels may indicate tissue damage."
+            info: "AST is an enzyme found in the liver, heart, and muscles. Normal levels indicate healthy tissue function."
           },
           {
             id: "tsh",
             name: "TSH",
-            value: "4.8",
+            value: "4.077",
             unit: "mIU/L",
             normalRange: "0.4-4.0 mIU/L",
             status: "high",
-            info: "TSH regulates thyroid hormone production. Elevated levels may indicate hypothyroidism."
+            info: "TSH regulates thyroid hormone production. Slightly elevated levels may indicate subclinical hypothyroidism."
           },
           {
             id: "a1c",
             name: "HbA1c",
-            value: "6.5",
+            value: "11.2",
             unit: "%",
             normalRange: "<5.7%",
             status: "high",
-            info: "HbA1c measures average blood sugar levels over the past 2-3 months. Elevated levels indicate prediabetes or diabetes."
+            info: "HbA1c measures average blood sugar levels over the past 2-3 months. Significantly elevated levels indicate poorly controlled diabetes."
           },
           {
             id: "vit-d",
             name: "Vitamin D",
-            value: "22",
+            value: "35.2",
             unit: "ng/mL",
             normalRange: "30-80 ng/mL",
-            status: "low",
-            info: "Vitamin D is important for bone health and immune function. Low levels are common and may require supplementation."
+            status: "normal",
+            info: "Vitamin D is important for bone health and immune function. Your levels are within the normal range."
           }
         ],
         diseaseRisks: [
           {
             name: "Type 2 Diabetes",
-            probability: 68,
-            description: "Your elevated glucose and HbA1c levels suggest an increased risk for Type 2 Diabetes.",
-            riskLevel: "high"
+            probability: 95,
+            description: "Your glucose and HbA1c levels strongly indicate Type 2 Diabetes that requires immediate attention.",
+            riskLevel: "critical"
           },
           {
             name: "Cardiovascular Disease",
-            probability: 52,
-            description: "Your cholesterol profile indicates a moderate risk of cardiovascular disease.",
-            riskLevel: "medium"
+            probability: 68,
+            description: "Your cholesterol profile and diabetes indicate an increased risk for cardiovascular disease.",
+            riskLevel: "high"
           },
           {
             name: "Hypothyroidism",
             probability: 45,
-            description: "Elevated TSH levels may indicate subclinical hypothyroidism.",
+            description: "Slightly elevated TSH levels may indicate subclinical hypothyroidism.",
             riskLevel: "medium"
           },
           {
-            name: "Vitamin D Deficiency",
-            probability: 75,
-            description: "Your vitamin D levels are below the recommended range, indicating deficiency.",
+            name: "Anemia",
+            probability: 65,
+            description: "Low hemoglobin levels indicate anemia that should be evaluated.",
             riskLevel: "high"
           },
           {
             name: "Chronic Inflammation",
-            probability: 38,
-            description: "Slightly elevated CRP suggests low-grade inflammation.",
+            probability: 55,
+            description: "Elevated CRP suggests ongoing inflammation, common in diabetes.",
             riskLevel: "medium"
           },
           {
@@ -218,28 +200,22 @@ export const analyzeBloodTest = async (file: File): Promise<HealthAnalysis> => {
             probability: 12,
             description: "Your liver enzyme levels are normal, indicating healthy liver function.",
             riskLevel: "low"
-          },
-          {
-            name: "Anemia",
-            probability: 8,
-            description: "Your hemoglobin levels are normal, indicating low risk for anemia.",
-            riskLevel: "low"
           }
         ],
         chartDiseaseRisks: [
-          { name: "Diabetes", value: 68, color: "#f87171" },
-          { name: "Heart Disease", value: 52, color: "#facc15" },
+          { name: "Diabetes", value: 95, color: "#ef4444" },
+          { name: "Heart Disease", value: 68, color: "#f87171" },
           { name: "Thyroid Issues", value: 45, color: "#facc15" },
-          { name: "Vitamin D Deficiency", value: 75, color: "#ef4444" },
-          { name: "Inflammation", value: 38, color: "#facc15" }
+          { name: "Anemia", value: 65, color: "#f87171" },
+          { name: "Inflammation", value: 55, color: "#facc15" }
         ],
         markerDistribution: [
-          { name: "Metabolic", normal: 2, abnormal: 3 },
-          { name: "Cardiovascular", normal: 3, abnormal: 1 },
-          { name: "Blood", normal: 3, abnormal: 0 },
+          { name: "Metabolic", normal: 0, abnormal: 3 },
+          { name: "Cardiovascular", normal: 1, abnormal: 3 },
+          { name: "Blood", normal: 0, abnormal: 1 },
           { name: "Liver", normal: 2, abnormal: 0 },
-          { name: "Kidney", normal: 2, abnormal: 0 },
-          { name: "Hormonal", normal: 0, abnormal: 1 }
+          { name: "Kidney", normal: 3, abnormal: 0 },
+          { name: "Hormonal", normal: 1, abnormal: 1 }
         ]
       };
       
