@@ -2,6 +2,15 @@
 import { Bell, HelpCircle, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   return (
@@ -12,11 +21,11 @@ const Header = () => {
             <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
             <path d="M3.22 12H9.5l.5-1 .5 1h6.28"></path>
           </svg>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white">
             <span className="text-medical-500">Predict</span>
             <span className="text-medical-700">Well</span>
             <span className="ml-1 text-xs font-normal text-medical-400">AI</span>
-          </h1>
+          </Link>
         </div>
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="text-gray-500">
@@ -27,11 +36,42 @@ const Header = () => {
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
           </Button>
-          <Avatar>
-            <AvatarFallback className="bg-medical-100 text-medical-700">
-              <UserCircle className="h-5 w-5" />
-            </AvatarFallback>
-          </Avatar>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                <Avatar>
+                  <AvatarFallback className="bg-medical-100 text-medical-700">
+                    <UserCircle className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/" className="cursor-pointer flex w-full">
+                  My Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/lab-reports" className="cursor-pointer flex w-full">
+                  My Lab Reports & Tests
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/appointments" className="cursor-pointer flex w-full">
+                  My Appointments
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/about-us" className="cursor-pointer flex w-full">
+                  About Us
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
